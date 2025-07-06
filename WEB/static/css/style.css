@@ -1,0 +1,467 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1b2e1f;
+    color: #ecf0f1;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #2c3e50;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+    font-weight: bold;
+}
+
+/* Pestañas */
+.tabs {
+    display: flex;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #34495e;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px 20px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+}
+
+.tab-button:last-child {
+    margin-right: 0;
+}
+
+.tab-button.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.tab-button:hover:not(.active) {
+    background-color: #3e5568;
+}
+
+/* Contenido de pestañas */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+input[type="text"],
+input[type="file"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #34495e;
+    border-radius: 6px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    color: #bdc3c7;
+    font-size: 0.9rem;
+}
+
+/* Botones */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #FF9800;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #f57c00;
+}
+
+.btn-blockchain {
+    background-color: #9C27B0;
+    color: white;
+}
+
+.btn-blockchain:hover {
+    background-color: #7B1FA2;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+.btn-highlight {
+    background-color: #007bff;  /* Azul moderno */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-highlight:hover {
+    background-color: #0056b3;
+}
+
+/* Métodos de extracción */
+.extraction-method {
+    display: none;
+}
+
+.extraction-method.active {
+    display: block;
+}
+
+/* Áreas de resultado */
+.result-area {
+    background-color: #27ae60;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.result-area h3 {
+    margin-bottom: 15px;
+    color: white;
+}
+
+.info-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.info-box p {
+    margin-bottom: 10px;
+}
+
+.key-box {
+    background-color: #2c3e50;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.key-box code {
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    flex: 1;
+    background-color: transparent;
+    color: #ecf0f1;
+}
+
+.warning-box {
+    background-color: #e74c3c;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.warning-box p {
+    margin: 0;
+    color: white;
+}
+
+.message-box {
+    margin-bottom: 15px;
+}
+
+.message-box textarea {
+    min-height: 120px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Información del proceso */
+.process-info {
+    background-color: #3498db;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.process-info h4 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.process-info p {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: #ecf0f1;
+}
+
+/* Overlay de carga */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #34495e;
+    border-top: 5px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Encabezado principal */
+.main-header {
+    max-width: 800px;           /* igual que .container */
+    margin: 0 auto;             /* centrado */
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 2rem 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    font-family: 'Arial', sans-serif;
+}
+.main-header .header-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.main-header .header-content p {
+    font-size: 1.1rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+/* Sección de ayuda */
+
+ .help-section {
+        text-align: right;
+        margin: 20px auto;
+    }
+
+    .help-button {
+        background-color: #777778;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: background-color 0.3s ease;
+    }
+
+    .help-button:hover {
+        background-color: #0056b3;
+    }
+
+    .help-content {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 20px;
+        color: #333; /* <-- texto oscuro visible */
+        text-align: left;
+        background-color: #b1b1b1;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .help-content.hidden {
+        display: none;
+    }
+
+    .help-content ol {
+        padding-left: 20px;
+    }
+
+
+.help-button {
+    background-color: #6d6d6d;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.help-button i {
+    margin-right: 0.3rem;
+}
+
+
+.hidden {
+    display: none;
+}
+
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #ecf0f1;
+}
+
+/* Clases de utilidad */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+        padding: 15px;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab-button {
+        margin-right: 0;
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+    
+    .key-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .key-box .btn-small {
+        margin-left: 0;
+        margin-top: 10px;
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}

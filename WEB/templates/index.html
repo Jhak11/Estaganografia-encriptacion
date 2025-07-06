@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal de Comunicación Seguro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+        <!-- Encabezado principal -->
+    <header class="main-header">
+        <div class="header-content">
+            <h1>Denuncia Segura</h1>
+            <p>Canal Anónimo de información ciudadana ante vulneración de derechos</p>
+        </div>
+    </header>
+    <div class="container">
+        <!-- Botón de ayuda -->
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp()"><i class="fa fa-question-circle"></i> ¿Cómo funciona?</button>
+            <div id="helpContent" class="help-content hidden">
+                <ol>
+                <li>Tú escribes un mensaje confidencial usando el formulario web.</li>
+                <li>El sistema lo protege con una clave secreta, asegurando que solo quien tenga esa clave pueda leerlo.</li>
+                <li>Ese mensaje protegido se esconde dentro de una imagen o un archivo de audio, sin alterar su apariencia o sonido.</li>
+                <li>El archivo con el mensaje oculto se sube a una red segura (IPFS), donde se guarda de forma descentralizada.</li>
+                <li>Se genera una dirección única de ese archivo (CID), que es transformada en un texto especial disfrazado usando espacios y tabulaciones.</li>
+                <li>Ese texto se publica en una red simulada de blockchain, como si fuera una prueba irrefutable de la existencia del mensaje.</li>
+                <li>Cuando quieras recuperar tu mensaje, solo necesitas el archivo oculto y la clave. El sistema lo extrae y lo descifra por ti.</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('ocultar')"><i class="fa fa-paper-plane"></i> Enviar Mensaje</button>
+            <button class="tab-button" onclick="showTab('extraer')"><i class="fa fa-unlock-alt"></i> Extraer Mensaje</button>
+        </div>
+        
+        <!-- Contenido de pestañas -->
+        <div id="ocultar" class="tab-content active">
+            <form id="formOcultar" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="mensaje">Mensaje:</label>
+                    <textarea id="mensaje" name="mensaje" placeholder="Escriba su mensaje aquí..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tipoMedio">Ocultar en:</label>
+                    <select id="tipoMedio" name="tipoMedio" onchange="updateFileInput()">
+                        <option value="imagen">Imagen</option>
+                        <option value="audio">Audio</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="archivoEntrada">Subir archivo portador:</label>
+                    <input type="file" id="archivoEntrada" name="archivoEntrada" accept=".bmp,.png,.jpg,.jpeg" required>
+                    <small id="fileHint">Formatos permitidos: BMP, PNG, JPG, JPEG</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nombreSalida">Nombre del archivo de salida:</label>
+                    <input type="text" id="nombreSalida" name="nombreSalida" placeholder="archivo_con_mensaje" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Ocultar Mensaje</button>
+            </form>
+            <div id="resultadoOcultar" class="result-area hidden">
+                <h3><i class="fa fa-check-circle"></i> Mensaje enviado correctamente</h3>
+                <div class="info-box">
+                    <p><strong>Archivo generado:</strong> <span id="rutaArchivo"></span></p>
+                    <p><strong>Clave AES-256 generada:</strong></p>
+                    <div class="key-box">
+                        <code id="claveAES"></code>
+                        <button onclick="copyToClipboard('claveAES')" class="btn btn-small">📋 Copiar</button>
+                    </div>
+                    <p><strong>Dirección del contrato:</strong></p>
+                    <div class="key-box">
+                        <code id="direccionContrato"></code>
+                        <button onclick="copyToClipboard('direccionContrato')" class="btn btn-small">📋 Copiar</button>
+                    </div>
+                    <div class="warning-box">
+                        <p><i class="fa fa-exclamation-triangle"></i> <strong>Importante:</strong> Guarde esta clave AES-256 en un lugar seguro. Sin ella, no podrá recuperar el mensaje.</p>
+                    </div>
+                </div>
+                <button onclick="closeResult()" class="btn btn-secondary">Cerrar</button>
+            </div>
+        </div>
+        
+        <div id="extraer" class="tab-content">
+            <div class="form-group">
+                <label for="metodoExtraccion">Método de extracción:</label>
+                <select id="metodoExtraccion" name="metodoExtraccion" onchange="updateExtractionMethod()">
+                    <option value="archivo"> Desde archivo local</option>
+                    <option value="blockchain"> Desde blockchain + IPFS</option>
+                </select>
+            </div>
+            
+            <!-- Extracción desde archivo -->
+            <div id="extraccionArchivo" class="extraction-method active">
+                <form id="formExtraerArchivo" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="tipoMedioExtraccion">Tipo de archivo:</label>
+                        <select id="tipoMedioExtraccion" name="tipoMedioExtraccion" onchange="updateFileInputExtraction()">
+                            <option value="imagen">Imagen</option>
+                            <option value="audio">Audio</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="archivoExtraccion">Archivo con mensaje oculto:</label>
+                        <input type="file" id="archivoExtraccion" name="archivoExtraccion" accept=".bmp,.png,.jpg,.jpeg" required>
+                        <small id="fileHintExtraction">Formatos permitidos: BMP, PNG, JPG, JPEG</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="claveExtraccion">Clave AES-256:</label>
+                        <input type="text" id="claveExtraccion" name="claveExtraccion" placeholder="Ingrese la clave AES-256 en base64" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-lock-open"></i>Extraer Mensaje</button>
+                </form>
+            </div>
+            
+            <!-- Extracción desde blockchain -->
+            <div id="extraccionBlockchain" class="extraction-method">
+                <form id="formExtraerBlockchain">
+                    <div class="form-group">
+                        <label for="direccionContratoExtraccion">Dirección del contrato:</label>
+                        <input type="text" id="direccionContratoExtraccion" name="direccionContratoExtraccion" placeholder="0x..." required>
+                        <button type="button" onclick="autocompletarDireccionContrato()" class="btn btn-small btn-highlight">Usar último contrato</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="claveBlockchain">Clave AES-256:</label>
+                        <input type="text" id="claveBlockchain" name="claveBlockchain" placeholder="Ingrese la clave AES-256 en base64" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-blockchain"><i class="fa fa-globe"></i>Recuperar desde Blockchain</button>
+                </form>
+                
+                <div id="procesoBlockchain" class="process-info hidden">
+                    <h4>Proceso de recuperación:</h4>
+                    <div id="procesoSteps"></div>
+                </div>
+            </div>
+            
+            <div id="resultadoExtraer" class="result-area hidden">
+                <h3><i class="fa fa-check-circle"></i>Mensaje extraído exitosamente</h3>
+                <div class="message-box">
+                    <label for="mensajeExtraido">Mensaje:</label>
+                    <textarea id="mensajeExtraido" readonly></textarea>
+                </div>
+                <div class="info-box">
+                    <p><strong>Tipo de archivo:</strong> <span id="tipoArchivoExtraido"></span></p>
+                    <p id="cidInfo" class="hidden"><strong>CID IPFS:</strong> <span id="cidIpfs"></span></p>
+                </div>
+                <button onclick="closeResultExtraction()" class="btn btn-secondary">Cerrar</button>
+            </div>
+        </div>
+        
+        <!-- Loading overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <p>Procesando...</p>
+        </div>
+    </div>
+    
+    <script>
+        // Funciones de pestañas
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Actualizar input de archivo según tipo de medio
+        function updateFileInput() {
+            const tipoMedio = document.getElementById('tipoMedio').value;
+            const archivoEntrada = document.getElementById('archivoEntrada');
+            const hint = document.getElementById('fileHint');
+            
+            if (tipoMedio === 'imagen') {
+                archivoEntrada.accept = '.bmp,.png,.jpg,.jpeg';
+                hint.textContent = 'Formatos permitidos: BMP, PNG, JPG, JPEG';
+            } else {
+                archivoEntrada.accept = '.wav';
+                hint.textContent = 'Formatos permitidos: WAV';
+            }
+        }
+        
+        function updateFileInputExtraction() {
+            const tipoMedio = document.getElementById('tipoMedioExtraccion').value;
+            const archivoExtraccion = document.getElementById('archivoExtraccion');
+            const hint = document.getElementById('fileHintExtraction');
+            
+            if (tipoMedio === 'imagen') {
+                archivoExtraccion.accept = '.bmp,.png,.jpg,.jpeg';
+                hint.textContent = 'Formatos permitidos: BMP, PNG, JPG, JPEG';
+            } else {
+                archivoExtraccion.accept = '.wav';
+                hint.textContent = 'Formatos permitidos: WAV';
+            }
+        }
+        
+        // Cambiar método de extracción
+        function updateExtractionMethod() {
+            const metodo = document.getElementById('metodoExtraccion').value;
+            
+            document.querySelectorAll('.extraction-method').forEach(method => {
+                method.classList.remove('active');
+            });
+            
+            if (metodo === 'archivo') {
+                document.getElementById('extraccionArchivo').classList.add('active');
+            } else {
+                document.getElementById('extraccionBlockchain').classList.add('active');
+            }
+        }
+        
+        // Mostrar/ocultar elementos
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+        
+        function closeResult() {
+            document.getElementById('resultadoOcultar').classList.add('hidden');
+            document.getElementById('formOcultar').reset();
+        }
+        
+        function closeResultExtraction() {
+            document.getElementById('resultadoExtraer').classList.add('hidden');
+            document.getElementById('procesoBlockchain').classList.add('hidden');
+            document.getElementById('formExtraerArchivo').reset();
+            document.getElementById('formExtraerBlockchain').reset();
+        }
+        
+        // Copiar al portapapeles
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            navigator.clipboard.writeText(element.textContent).then(() => {
+                alert('Copiado al portapapeles');
+            });
+        }
+        
+        // Envío de formularios
+        document.getElementById('formOcultar').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            const formData = new FormData(this);
+            
+            fetch('/ocultar', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.exito) {
+                     // Mostrar ruta del archivo
+                    const contenedorRuta = document.getElementById('rutaArchivo');
+                    contenedorRuta.innerHTML = ''; // Limpiar contenido anterior
+
+                    // Mostrar nombre del archivo
+                    contenedorRuta.textContent = data.ruta_salida;
+
+                    // Crear enlace de descarga
+                    const enlaceDescarga = document.createElement('a');
+                    enlaceDescarga.href = `/descargar/${data.nombre_archivo}`;
+                    enlaceDescarga.textContent = '⬇️ Descargar archivo generado';
+                    enlaceDescarga.classList.add('btn', 'btn-primary');
+                    enlaceDescarga.setAttribute('download', '');
+                    enlaceDescarga.style.display = 'inline-block';
+                    enlaceDescarga.style.marginTop = '10px';
+                    enlaceDescarga.style.marginLeft = '10px';
+
+                    // Agregar enlace debajo del nombre del archivo
+                    contenedorRuta.appendChild(document.createElement('br'));
+                    contenedorRuta.appendChild(enlaceDescarga);
+
+                    // Mostrar clave y dirección del contrato
+                    document.getElementById('claveAES').textContent = data.clave;
+                    document.getElementById('direccionContrato').textContent = data.direccion_contrato;
+
+                    // Mostrar contenedor de resultado
+                    document.getElementById('resultadoOcultar').classList.remove('hidden');
+                
+                } else {
+                    alert('Error: ' + data.mensaje);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                alert('Error: ' + error.message);
+            });
+        });
+        
+        document.getElementById('formExtraerArchivo').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            const formData = new FormData(this);
+            
+            fetch('/extraer-archivo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.exito) {
+                    document.getElementById('mensajeExtraido').value = data.mensaje;
+                    document.getElementById('tipoArchivoExtraido').textContent = data.tipo_archivo;
+                    document.getElementById('cidInfo').classList.add('hidden');
+                    document.getElementById('resultadoExtraer').classList.remove('hidden');
+                } else {
+                    alert('Error: ' + data.mensaje);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                alert('Error: ' + error.message);
+            });
+        });
+        
+        document.getElementById('formExtraerBlockchain').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            const formData = new FormData(this);
+            
+            fetch('/extraer-blockchain', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.exito) {
+                    document.getElementById('mensajeExtraido').value = data.mensaje;
+                    document.getElementById('tipoArchivoExtraido').textContent = data.tipo_archivo;
+                    document.getElementById('cidIpfs').textContent = data.cid_ipfs;
+                    document.getElementById('cidInfo').classList.remove('hidden');
+                    document.getElementById('resultadoExtraer').classList.remove('hidden');
+                    
+                    // Mostrar proceso
+                    if (data.proceso_info) {
+                        const stepsDiv = document.getElementById('procesoSteps');
+                        stepsDiv.innerHTML = '';
+                        data.proceso_info.forEach(step => {
+                            const p = document.createElement('p');
+                            p.textContent = step;
+                            stepsDiv.appendChild(p);
+                        });
+                        document.getElementById('procesoBlockchain').classList.remove('hidden');
+                    }
+                } else {
+                    alert('Error: ' + data.mensaje);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                alert('Error: ' + error.message);
+            });
+        });
+
+        function autocompletarDireccionContrato() {
+            fetch('/ultima-direccion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exito) {
+                        document.getElementById('direccionContratoExtraccion').value = data.direccion;
+                        alert('Dirección autocompletada');
+                    } else {
+                        alert('❌ Error al obtener la dirección: ' + data.mensaje);
+                    }
+                })
+                .catch(error => {
+                    alert('❌ Error de red: ' + error.message);
+                });
+        }
+
+        function toggleHelp() {
+            const help = document.getElementById('helpContent');
+            help.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
